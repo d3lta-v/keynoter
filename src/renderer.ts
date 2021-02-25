@@ -27,5 +27,12 @@
  */
 
 import './index.css';
+// import {IpcRenderer} from 'electron';
+
+// function sendForm(event) {
+//     event.preventDefault() // stop the form from submitting
+//     const speechToSynth = document.getElementById("speechToSynth").value;
+//     ipcRenderer.send('form-submission', speechToSynth)
+// }
 
 console.log('👋 This message is being logged by "renderer.js", included via webpack');
