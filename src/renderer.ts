@@ -28,6 +28,14 @@
 
 import './index.css';
 // import {IpcRenderer} from 'electron';
+import {IpcService} from "./IpcService";
+
+const ipc = new IpcService();
+
+document.getElementById('testbutton').addEventListener('click', async () => {
+  const t = await ipc.send<{ message: string }>('system-info');
+  document.getElementById('os-info').innerHTML = t.message;
+});
 
 // function sendForm(event) {
 //     event.preventDefault() // stop the form from submitting

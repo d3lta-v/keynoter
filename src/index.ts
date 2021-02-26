@@ -11,6 +11,9 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    webPreferences: {
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
   });
 
   // and load the index.html of the app.
@@ -48,6 +51,7 @@ app.on('activate', () => {
 
 // Custom code begins here
 
-ipcMain.on('form-submission', function (event, firstname) {
-  console.log("this is the message from the form ->", firstname)
-});
+// ipcMain.on('form-submission', function (event, firstname) {
+//   console.log("this is the message from the form ->", firstname);
+//   console.log("the event triggering this is: ", event);
+// });

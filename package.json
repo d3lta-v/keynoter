@@ -1,8 +1,8 @@
 {
   "name": "keynoter",
   "productName": "keynoter",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "version": "0.0.1",
+  "description": "Advanced and simple speech synthesis",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -50,7 +50,10 @@
                 {
                   "html": "./src/index.html",
                   "js": "./src/renderer.ts",
-                  "name": "main_window"
+                  "name": "main_window",
+                  "preload": {
+                    "js": "./src/preload.ts"
+                  }
                 }
               ]
             }
