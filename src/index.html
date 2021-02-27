@@ -31,15 +31,19 @@
       <button class="button-primary" id="testbutton">Test button</button>
     </div>
     <div class="row">
-      <form name="ipcForm" onSubmit="JavaScript:sendForm(event)">
+      <form name="ipcForm">
         <label for="speechToSynth">Speech to synthesise</label>
         <textarea class="u-full-width" placeholder="Hi Dave..." id="speechToSynth"></textarea>
-        <input class="button-primary" type="submit" value="Download speech">
+        <input class="button-primary" id="sendButton" type="button" value="Download speech">
       </form>
     </div>
   </div>
 
+  <script>
+    // One can insert context isolated API calls to and from the Node server from here
 
+    
+  </script>
   
 <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->

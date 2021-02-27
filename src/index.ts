@@ -30,6 +30,12 @@ class Main {
     const mainWindow = new BrowserWindow({
       height: 600,
       width: 800,
+      webPreferences: {
+        nodeIntegration: false, // is default value after Electron v5
+        contextIsolation: true, // protect against prototype pollution
+        enableRemoteModule: false, // turn off remote
+        preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY // use a preload script
+      }
     });
   
     // and load the index.html of the app.
@@ -57,8 +63,18 @@ class Main {
   }
 
   private registerIpcChannels(ipcChannels: IpcChannelInterface[]) {
-    console.log("IPC Channel registered: ", ipcChannels);
     ipcChannels.forEach(channel => ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request)));
+    
+    // the sample uses toMain
+    // ipcMain.on("system-info", (event, args: any) => {
+      // console.log("toMain IPC called with args: ", args);
+      // fs.readFile("path/to/file", (error, data) => {
+      //   // Do something with file contents
+    
+      //   // Send result back to renderer process
+      //   win.webContents.send("fromMain", responseObj);
+      // });
+    // });
   }
 }
 

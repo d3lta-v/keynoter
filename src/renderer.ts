@@ -28,10 +28,26 @@
 
 import './index.css';
 
+console.log('👋 This message is being logged by "renderer.js", included via webpack');
+
+// We cannot just use IpcService in the renderer as it requires code from the Node.js side of things, which is a security risk.
+// import {IpcService} from "./app/IpcService";
+// const ipc = new IpcService();
+
+document.getElementById('sendButton').addEventListener('click', async () => {
+  // const t = await ipc.send<{ message: string }>('system-info');
+  // document.getElementById('os-info').innerHTML = t.message;
+  const data: string = document.getElementById("speechToSynth").value;
+  window.api.send("system-info", data);
+});
+
+
 // function sendForm(event) {
-//     event.preventDefault() // stop the form from submitting
-//     const speechToSynth = document.getElementById("speechToSynth").value;
-//     ipcRenderer.send('form-submission', speechToSynth)
+//   event.preventDefault() // stop the form from submitting
+//   const data: string = document.getElementById("speechToSynth").value;
+//   window.api.send("system-info", data);
 // }
 
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
+window.api.receive("system-info_response", (data) => {
+  console.log(`Received ${data} from main process`);
+});
