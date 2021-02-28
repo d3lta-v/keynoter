@@ -28,22 +28,20 @@
   <div class="container">
     <div class="row">
       <h3>Keynoter - Advanced Speech Synthesis</h3>
-      <button class="button-primary" id="testbutton">Test button</button>
     </div>
     <div class="row">
       <form name="ipcForm">
         <label for="speechToSynth">Speech to synthesise</label>
-        <textarea class="u-full-width" placeholder="Hi Dave..." id="speechToSynth"></textarea>
+        <textarea style="resize: none" class="u-full-width" placeholder="Hi Dave..." id="speechToSynth"></textarea>
         <input class="button-primary" id="sendButton" type="button" value="Download speech">
       </form>
     </div>
+    <div class="row">
+      <div class="four columns"><p><b>Current Status: </b></p></div>
+      <div class="eight columns"><p id="currentStatus">No file is being processed.</p></div>
+    </div>
+
   </div>
-
-  <script>
-    // One can insert context isolated API calls to and from the Node server from here
-
-    
-  </script>
   
 <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
