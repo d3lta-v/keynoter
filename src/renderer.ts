@@ -27,27 +27,46 @@
  */
 
 import './index.css';
+import {IpcServiceNew} from "./app/IpcServiceNew";
+
+/*
+  Key variables and constants
+*/
+const ipc = new IpcServiceNew();
+const speechTextBox: HTMLInputElement = document.getElementById('speechToSynth') as HTMLInputElement;
 
 console.log('👋 This message is being logged by "renderer.js", included via webpack');
 
-// We cannot just use IpcService in the renderer as it requires code from the Node.js side of things, which is a security risk.
-// import {IpcService} from "./app/IpcService";
-// const ipc = new IpcService();
-
+/*
+  Event Listeners
+*/
 document.getElementById('sendButton').addEventListener('click', async () => {
   // const t = await ipc.send<{ message: string }>('system-info');
   // document.getElementById('os-info').innerHTML = t.message;
-  const data: string = document.getElementById("speechToSynth").value;
-  window.api.send("system-info", data);
+
+  const data: string = speechTextBox.value;
+  // window.api.send("system-info", data);
+  // window.api.send("system-info");
+  const t = await ipc.send<{ message: string }>('system-info');
+  console.log("Received message from IPC: ", t.message);
 });
 
+// window.api.receive("system-info_response", (data) => {
+//   console.log(`Received ${data} from main process`);
+// });
 
-// function sendForm(event) {
-//   event.preventDefault() // stop the form from submitting
-//   const data: string = document.getElementById("speechToSynth").value;
-//   window.api.send("system-info", data);
-// }
+/*
+Last time, the event listener should look something like this
 
-window.api.receive("system-info_response", (data) => {
-  console.log(`Received ${data} from main process`);
+import {IpcService} from "./IpcService";
+
+const ipc = new IpcService();
+
+document.getElementById('testbutton').addEventListener('click', async () => {
+  console.log("Button pressed");
+  const t = await ipc.send<{ message: string }>('system-info');
+  document.getElementById('os-info').innerHTML = t.message;
 });
+*/
+
+
