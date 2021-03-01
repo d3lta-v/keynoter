@@ -35,6 +35,7 @@ import {IpcRequest} from "./shared/IpcRequest";
 */
 const ipc = new IpcServiceNew();
 const speechTextBox: HTMLInputElement = document.getElementById('speechToSynth') as HTMLInputElement;
+const currentStatusPara: HTMLElement = document.getElementById('currentStatus');
 
 console.log('👋 This message is being logged by "renderer.js", included via webpack');
 
@@ -52,6 +53,10 @@ document.getElementById('sendButton').addEventListener('click', async () => {
   const request: IpcRequest = { params: [data] };
   const t = await ipc.send<{ message: string }>('system-info', request);
   console.log("Received message from IPC: ", t);
+});
+
+window.api.receive("connection-state", (event, ...args: any[]) => {
+
 });
 
 /*
