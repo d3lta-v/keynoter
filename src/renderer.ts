@@ -28,6 +28,7 @@
 
 import './index.css';
 import {IpcServiceNew} from "./app/IpcServiceNew";
+import {IpcRequest} from "./shared/IpcRequest";
 
 /*
   Key variables and constants
@@ -47,13 +48,11 @@ document.getElementById('sendButton').addEventListener('click', async () => {
   const data: string = speechTextBox.value;
   // window.api.send("system-info", data);
   // window.api.send("system-info");
-  const t = await ipc.send<{ message: string }>('system-info');
-  console.log("Received message from IPC: ", t.message);
-});
 
-// window.api.receive("system-info_response", (data) => {
-//   console.log(`Received ${data} from main process`);
-// });
+  const request: IpcRequest = { params: [data] };
+  const t = await ipc.send<{ message: string }>('system-info', request);
+  console.log("Received message from IPC: ", t);
+});
 
 /*
 Last time, the event listener should look something like this

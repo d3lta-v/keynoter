@@ -64,17 +64,6 @@ class Main {
 
   private registerIpcChannels(ipcChannels: IpcChannelInterface[]) {
     ipcChannels.forEach(channel => ipcMain.on(channel.getName(), (event, request) => channel.handle(event, request)));
-    
-    // the sample uses toMain
-    // ipcMain.on("system-info", (event, args: any) => {
-      // console.log("toMain IPC called with args: ", args);
-      // fs.readFile("path/to/file", (error, data) => {
-      //   // Do something with file contents
-    
-      //   // Send result back to renderer process
-      //   win.webContents.send("fromMain", responseObj);
-      // });
-    // });
   }
 }
 

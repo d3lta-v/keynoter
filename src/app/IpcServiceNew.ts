@@ -18,11 +18,13 @@ export class IpcServiceNew {
     // const ipcRenderer = this.ipcRenderer;
     // ipcRenderer.send(channel, request);
     window.api.send(channel, request);
+    console.log(`Sent IPC API to ${channel} with request: ${request}`);
 
     // This method returns a promise which will be resolved when the response has arrived.
     return new Promise(resolve => {
     //   ipcRenderer.once(request.responseChannel, (event, response) => resolve(response));
-      window.api.receive(request.responseChannel, (event, response) => resolve(response));
+      console.log("Promise resolved");
+      window.api.receiveOnce(request.responseChannel, (event: any, response: any) => resolve(response));
     });
 
     // window.api.send("system-info", data);

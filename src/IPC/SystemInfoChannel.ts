@@ -15,6 +15,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // This is where you create and send the response data back once it is completed.
     // Example, when you want to send back System Information:
     // event.sender.send(request.responseChannel, { kernel: execSync('uname -a').toString() });
-    event.sender.send(request.responseChannel, { message: "hewwo" });
+    console.log("Sent event from SystemInfoChannel with response channel: ", request.responseChannel);
+    event.sender.send(request.responseChannel, { message: request.params[0] + "_appended" });
   }
 }
