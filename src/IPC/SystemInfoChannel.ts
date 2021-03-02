@@ -3,7 +3,7 @@ import {IpcMainEvent, BrowserWindow, dialog, app} from 'electron';
 import fs from 'fs';
 import path from 'path';
 import {IpcRequest} from "../shared/IpcRequest";
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough from 'tough-cookie';
 
@@ -62,7 +62,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
       },
       jar: cookieJar,
       data : request1Body,
-      withCredentials: true
+      withCredentials: true,
     };
     const request2Config: AxiosRequestConfig = {
       method: 'get',
@@ -70,7 +70,19 @@ export class SystemInfoChannel implements IpcChannelInterface {
       jar: cookieJar,
       responseType: 'arraybuffer',
       responseEncoding: 'binary',
-      withCredentials: true
+      withCredentials: true,
+      onDownloadProgress: (progressEvent: ProgressEvent) => {
+        // event.type
+        const percentage = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        if (percentage == 100) {
+          // set text to completed
+          event.sender.send("connection-state", { message: "Download completed!" });
+        } else {
+          event.sender.send("connection-state", { message: "Downloading / " + percentage + "% complete" });
+        }
+      }
     };
 
     const getSpeechFile = async () => {
@@ -95,6 +107,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
         const jsonResponse: WJsonResponse = payload1.data;
         if (jsonResponse.status == "success") {
           console.log("Received successful response: ", jsonResponse.message);
+          event.sender.send("connection-state", { message: "Downloading..." });
         } else {
           throw new Error("Unsuccessful 1st payload injection: " + jsonResponse.message);
         }
@@ -108,11 +121,13 @@ export class SystemInfoChannel implements IpcChannelInterface {
         const payload2 = await axios(request2Config);
         if (payload2.status == 200) {
           // response is good! save the file
+          event.sender.send("connection-state", { message: "Download complete!" });
           fs.writeFileSync(saveDialogResult.filePath, payload2.data, {encoding: null});
           console.log("File saved to: ", saveDialogResult);
         }
       } catch (err) {
-        //TODO: show errors thru the user interface
+        //TODO: properly show errors thru the user interface
+        event.sender.send("connection-state", { message: (err as Error).message });
         console.log(err);
       }
     }

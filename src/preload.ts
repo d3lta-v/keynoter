@@ -1,12 +1,12 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import {IpcChannelInterface} from "./IPC/IpcChannelInterface";
+// import {IpcChannelInterface} from "./IPC/IpcChannelInterface";
 
 // Import all channels here
 import {SystemInfoChannel} from "./IPC/SystemInfoChannel";
-var systemInfoChannel = new SystemInfoChannel();
+const systemInfoChannel = new SystemInfoChannel();
 
 // Determine the static validChannels here
-var validChannels = [systemInfoChannel.getName()];
+const validChannels = [systemInfoChannel.getName(), "connection-state"];
 validChannels.forEach(element => {
   validChannels.push(element + "_response");
 });
@@ -23,12 +23,11 @@ contextBridge.exposeInMainWorld("api", {
         ipcRenderer.send(channel, data);
       }
     },
-    receive: (channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) => {
+    receive: (channel: string, listener: (...args: any[]) => void) => {
       // fromMain
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
-        // ^ Above statement is deprecated, we need to preserve the whole listener payload
-        ipcRenderer.on(channel, listener);
+        ipcRenderer.on(channel, (event, ...args) => listener(...args));
       }
     },
     receiveOnce: (channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) => {
@@ -36,6 +35,8 @@ contextBridge.exposeInMainWorld("api", {
       //TODO: perform valid channel identification
       // const validChannels = ["system-info_response"];
       // if (validChannels.includes(channel)) {
+        // Deliberately strip event as it includes `sender`
+        // ^ Above statement is deprecated, we need to preserve the whole listener payload
         ipcRenderer.once(channel, listener);
       // }
     }
