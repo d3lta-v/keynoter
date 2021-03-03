@@ -9,6 +9,7 @@ import tough from 'tough-cookie';
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
+axios.defaults.adapter = require('axios/lib/adapters/http');
 interface WJsonResponse {
   status?: string;
   message?: string;
@@ -68,21 +69,9 @@ export class SystemInfoChannel implements IpcChannelInterface {
       method: 'get',
       url: pay2,
       jar: cookieJar,
-      responseType: 'arraybuffer',
+      responseType: 'stream',
       responseEncoding: 'binary',
       withCredentials: true,
-      onDownloadProgress: (progressEvent: ProgressEvent) => {
-        // event.type
-        const percentage = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        if (percentage == 100) {
-          // set text to completed
-          event.sender.send("connection-state", { message: "Download completed!" });
-        } else {
-          event.sender.send("connection-state", { message: "Downloading / " + percentage + "% complete" });
-        }
-      }
     };
 
     const getSpeechFile = async () => {
@@ -103,28 +92,51 @@ export class SystemInfoChannel implements IpcChannelInterface {
           throw new Error("Save cancelled");
         }
 
+        event.sender.send("connection-state", { message: "Initialising download..." });
+        
         const payload1 = await axios(request1Config);
         const jsonResponse: WJsonResponse = payload1.data;
         if (jsonResponse.status == "success") {
           console.log("Received successful response: ", jsonResponse.message);
-          event.sender.send("connection-state", { message: "Downloading..." });
+          event.sender.send("connection-state", { message: "Downloading audio..." });
         } else {
           throw new Error("Unsuccessful 1st payload injection: " + jsonResponse.message);
         }
 
-        // const writer = fs.createWriteStream(saveDialogResult.filePath);
+        const writer = fs.createWriteStream(saveDialogResult.filePath, {encoding: null});
         // axios(request2Config)
         // .then(async (response: any) => {
         //   response.data.pipe(writer);
         // });
 
-        const payload2 = await axios(request2Config);
-        if (payload2.status == 200) {
-          // response is good! save the file
-          event.sender.send("connection-state", { message: "Download complete!" });
-          fs.writeFileSync(saveDialogResult.filePath, payload2.data, {encoding: null});
-          console.log("File saved to: ", saveDialogResult);
-        }
+        axios(request2Config)
+        .then((response) => {
+          response.data.pipe(writer);
+          
+          var downloaded = 0;
+          response.data.on('data', (data: object) => {
+            downloaded += Buffer.byteLength(data);
+            const req2len = parseInt(response.headers['Content-Length']);
+            const downloadProgress = downloaded / req2len * 100;
+            console.log("Downloaded: ", downloaded);
+            console.log("Total: ", response.headers['Content-Length']);
+            event.sender.send("connection-state", { message: "Downloading audio " + downloadProgress + "%" });
+          });
+          response.data.on('end', () => {
+            // event.sender.send('downloadEnd')
+          })
+          response.data.on('error', (error) => {
+            // event.sender.send('downloadError', error)
+          })
+        });
+
+        // const payload2 = await axios(request2Config);
+        // if (payload2.status == 200) {
+        //   // response is good! save the file
+        //   event.sender.send("connection-state", { message: "Download complete!" });
+        //   fs.writeFileSync(saveDialogResult.filePath, payload2.data, {encoding: null});
+        //   console.log("File saved to: ", saveDialogResult);
+        // }
       } catch (err) {
         //TODO: properly show errors thru the user interface
         event.sender.send("connection-state", { message: (err as Error).message });
