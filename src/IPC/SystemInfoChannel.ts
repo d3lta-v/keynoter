@@ -9,7 +9,6 @@ import tough from 'tough-cookie';
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
-axios.defaults.adapter = require('axios/lib/adapters/http');
 interface WJsonResponse {
   status?: string;
   message?: string;
@@ -114,18 +113,16 @@ export class SystemInfoChannel implements IpcChannelInterface {
           response.data.pipe(writer);
           
           var downloaded = 0;
-          response.data.on('data', (data: object) => {
+          response.data.on('data', (data: ArrayBuffer) => {
             downloaded += Buffer.byteLength(data);
-            const req2len = parseInt(response.headers['Content-Length']);
-            const downloadProgress = downloaded / req2len * 100;
-            console.log("Downloaded: ", downloaded);
-            console.log("Total: ", response.headers['Content-Length']);
-            event.sender.send("connection-state", { message: "Downloading audio " + downloadProgress + "%" });
+            const downloadProgress = downloaded / 1000;
+            event.sender.send("connection-state", { message: "Downloading audio (" + downloadProgress + " KB done)" });
           });
           response.data.on('end', () => {
             // event.sender.send('downloadEnd')
+            event.sender.send("connection-state", { message: "Download complete!" });
           })
-          response.data.on('error', (error) => {
+          response.data.on('error', (error: Error) => {
             // event.sender.send('downloadError', error)
           })
         });
