@@ -102,6 +102,18 @@ export class SystemInfoChannel implements IpcChannelInterface {
           throw new Error("Unsuccessful 1st payload injection: " + jsonResponse.message);
         }
 
+        // Check if file is being used.
+        try {
+          const fileHandle = await fs.promises.open(saveDialogResult.filePath, fs.constants.O_RDONLY | 0x10000000);
+          fileHandle.close();
+        } catch (error) {
+          if (error.code === 'EBUSY'){
+            throw new Error("MP3 file is busy");
+          } else {
+            throw error;
+          }
+        }
+
         const writer = fs.createWriteStream(saveDialogResult.filePath, {encoding: null});
         // axios(request2Config)
         // .then(async (response: any) => {
@@ -136,7 +148,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
         // }
       } catch (err) {
         //TODO: properly show errors thru the user interface
-        event.sender.send("connection-state", { message: (err as Error).message });
+        event.sender.send("connection-state", { message: "Error: " + (err as Error).message });
         console.log(err);
       }
     }
