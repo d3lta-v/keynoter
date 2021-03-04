@@ -17,20 +17,20 @@ console.log("Valid channels: ", validChannels);
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld("api", {
-    send: (channel: string, data: any) => {
+    send: (channel: string, data: unknown) => {
       // toMain
       if (validChannels.includes(channel)) {
         ipcRenderer.send(channel, data);
       }
     },
-    receive: (channel: string, listener: (...args: any[]) => void) => {
+    receive: (channel: string, listener: (...args: unknown[]) => void) => {
       // fromMain
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
         ipcRenderer.on(channel, (event, ...args) => listener(...args));
       }
     },
-    receiveOnce: (channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) => {
+    receiveOnce: (channel: string, listener: (event: IpcRendererEvent, ...args: unknown[]) => void) => {
       // fromMain
       //TODO: perform valid channel identification
       // const validChannels = ["system-info_response"];

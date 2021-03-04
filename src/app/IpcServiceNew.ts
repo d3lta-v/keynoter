@@ -24,7 +24,7 @@ export class IpcServiceNew {
     return new Promise(resolve => {
     //   ipcRenderer.once(request.responseChannel, (event, response) => resolve(response));
       console.log("Promise resolved");
-      window.api.receiveOnce(request.responseChannel, (event: any, response: any) => resolve(response));
+      window.api.receiveOnce(request.responseChannel, (event: unknown, response: never) => resolve(response));
     });
 
     // window.api.send("system-info", data);
