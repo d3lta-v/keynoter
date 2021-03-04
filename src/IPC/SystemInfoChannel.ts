@@ -103,14 +103,16 @@ export class SystemInfoChannel implements IpcChannelInterface {
         }
 
         // Check if file is being used.
-        try {
-          const fileHandle = await fs.promises.open(saveDialogResult.filePath, fs.constants.O_RDONLY | 0x10000000);
-          fileHandle.close();
-        } catch (error) {
-          if (error.code === 'EBUSY'){
-            throw new Error("MP3 file is busy");
-          } else {
-            throw error;
+        if (fs.existsSync(saveDialogResult.filePath)) {
+          try {
+            const fileHandle = await fs.promises.open(saveDialogResult.filePath, fs.constants.O_RDONLY | 0x10000000);
+            fileHandle.close();
+          } catch (error) {
+            if (error.code === 'EBUSY'){
+              throw new Error("MP3 file is busy");
+            } else {
+              throw error;
+            }
           }
         }
 
