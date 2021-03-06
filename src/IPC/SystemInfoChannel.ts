@@ -69,7 +69,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
       url: pay2,
       jar: cookieJar,
       responseType: 'stream',
-      responseEncoding: 'binary',
+      // responseEncoding: 'binary',
       withCredentials: true,
     };
 
@@ -126,7 +126,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
         .then((response) => {
           response.data.pipe(writer);
           
-          var downloaded = 0;
+          let downloaded = 0;
           response.data.on('data', (data: ArrayBuffer) => {
             downloaded += Buffer.byteLength(data);
             const downloadProgress = downloaded / 1000;
@@ -138,6 +138,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
           })
           response.data.on('error', (error: Error) => {
             // event.sender.send('downloadError', error)
+            throw error;
           })
         });
 
