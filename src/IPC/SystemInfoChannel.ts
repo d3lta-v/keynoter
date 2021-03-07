@@ -6,6 +6,12 @@ import {IpcRequest} from "../shared/IpcRequest";
 import axios, { AxiosRequestConfig } from 'axios';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough from 'tough-cookie';
+import '@suldashi/lame';
+// import lame from '@suldashi/lame';
+// import * as lame from '@suldashi/lame';
+// import lame = require('@suldashi/lame');
+// import lame from '@suldashi/lame';
+// const lame = require('lame');
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
@@ -124,16 +130,23 @@ export class SystemInfoChannel implements IpcChannelInterface {
 
         axios(request2Config)
         .then((response) => {
-          response.data.pipe(writer);
-          
           let downloaded = 0;
+          response.data.pipe(writer);
+          // const decoder = lame.Decoder();
+          // decoder.on('format', (format: string) =>  {
+          //   console.log("Format of MP3 = ", format);
+
+          //   // Finished decoding MP3 into PCM, download into file (testing)
+          //   decoder.pipe(writer);
+          // });
+          // response.data.pipe(decoder);
+          
           response.data.on('data', (data: ArrayBuffer) => {
             downloaded += Buffer.byteLength(data);
             const downloadProgress = downloaded / 1000;
             event.sender.send("connection-state", { message: "Downloading audio (" + downloadProgress + " KB done)" });
           });
-          response.data.on('end', () => {
-            // event.sender.send('downloadEnd')
+          response.data.on('end', () => {            
             event.sender.send("connection-state", { message: "Download complete!" });
           })
           response.data.on('error', (error: Error) => {
