@@ -6,7 +6,8 @@ import {IpcRequest} from "../shared/IpcRequest";
 import axios, { AxiosRequestConfig } from 'axios';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough from 'tough-cookie';
-import '@suldashi/lame';
+// import '@suldashi/lame';
+
 // import lame from '@suldashi/lame';
 // import * as lame from '@suldashi/lame';
 // import lame = require('@suldashi/lame');
