@@ -88,6 +88,6 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
-    "@suldashi/lame": "^1.2.4"
+    "lame": "d3lta-v/node-lame"
   }
 }

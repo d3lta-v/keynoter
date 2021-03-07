@@ -6,13 +6,7 @@ import {IpcRequest} from "../shared/IpcRequest";
 import axios, { AxiosRequestConfig } from 'axios';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough from 'tough-cookie';
-import '@suldashi/lame';
-
-// import lame from '@suldashi/lame';
-// import * as lame from '@suldashi/lame';
-// import lame = require('@suldashi/lame');
-// import lame from '@suldashi/lame';
-// const lame = require('lame');
+import * as lame from 'lame';
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
@@ -132,15 +126,25 @@ export class SystemInfoChannel implements IpcChannelInterface {
         axios(request2Config)
         .then((response) => {
           let downloaded = 0;
-          response.data.pipe(writer);
-          // const decoder = lame.Decoder();
-          // decoder.on('format', (format: string) =>  {
-          //   console.log("Format of MP3 = ", format);
+          // response.data.pipe(writer);
+          const decoder = lame.Decoder();
+          decoder.on('format', (format: lame.EncoderOptions) =>  {
+            // Re-encode MP3 from a badly made VBR file into a 96kbps CBR file
+            const encoder = lame.Encoder({
+              float: format.float,
+              // input
+              channels: format.channels,
+              bitDepth: format.bitDepth,
+              sampleRate: format.sampleRate,
+              // output
+              bitRate: 96,
+              outSampleRate: format.sampleRate,
+              mode: format.mode
+            });
 
-          //   // Finished decoding MP3 into PCM, download into file (testing)
-          //   decoder.pipe(writer);
-          // });
-          // response.data.pipe(decoder);
+            decoder.pipe(encoder).pipe(writer);
+          });
+          response.data.pipe(decoder);
           
           response.data.on('data', (data: ArrayBuffer) => {
             downloaded += Buffer.byteLength(data);
