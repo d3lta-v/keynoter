@@ -1,8 +1,8 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 // import {IpcChannelInterface} from "./IPC/IpcChannelInterface";
 
-// Import all channels here
-import {SystemInfoChannel} from "./IPC/SystemInfoChannel";
+// Import all channels here, ensure that you ONLY use the preload variants!!
+import {SystemInfoChannel} from "./IPC/SystemInfoChannel_preload";
 const systemInfoChannel = new SystemInfoChannel();
 
 // Determine the static validChannels here
