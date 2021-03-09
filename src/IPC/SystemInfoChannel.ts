@@ -100,6 +100,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
           console.log("Received successful response: ", jsonResponse.message);
           event.sender.send("connection-state", { message: "Downloading audio..." });
         } else {
+          fs.unlinkSync(saveDialogResult.filePath);
           throw new Error("Unsuccessful 1st payload injection: " + jsonResponse.message);
         }
 
@@ -156,6 +157,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
           })
           response.data.on('error', (error: Error) => {
             // event.sender.send('downloadError', error)
+            fs.unlinkSync(saveDialogResult.filePath);
             throw error;
           })
         });
