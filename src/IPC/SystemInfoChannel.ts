@@ -56,24 +56,20 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // First stage: escaping XML characters
     // TODO
     // Second stage: injecting delays
-    const replacementMap: { [key: string]: string} = {
-      "🕛": "<break strength=\"none\">no pause</break>",
-      "🕐": "<break strength=\"x-weak\">x-weak pause</break>",
-      "🕑": "<break strength=\"weak\">weak pause</break>",
-      "🕒": "<break strength=\"medium\">medium pause</break>",
-      "🕓": "<break strength=\"strong\">strong pause</break>",
-      "🕔": "<break strength=\"x-strong\">x-strong pause</break>"
-    };
-    for (const key in replacementMap) {
-      if (Object.prototype.hasOwnProperty.call(replacementMap, key)) {
-        const element = replacementMap[key];
-        console.log(key);
-        console.log(element);
-        textToSynth.replace(key, element);
-      }
-    }
-    const rex = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
-    textToSynth.replace(rex, match => `[e-${match.codePointAt(0).toString(16)}]`);
+    // const replacementMap: { [key: string]: string} = {
+    //   "🕛": "<break strength=\"none\">no pause</break>",
+    //   "🕐": "<break strength=\"x-weak\">x-weak pause</break>",
+    //   "🕑": "<break strength=\"weak\">weak pause</break>",
+    //   "🕒": "<break strength=\"medium\">medium pause</break>",
+    //   "🕓": "<break strength=\"strong\">strong pause</break>",
+    //   "🕔": "<break strength=\"x-strong\">x-strong pause</break>"
+    // };
+    // for (const key in replacementMap) {
+    //   if (Object.prototype.hasOwnProperty.call(replacementMap, key)) {
+    //     const element = replacementMap[key];
+    //     textToSynth = textToSynth.replace(key, element);
+    //   }
+    // }
 
     let ssml = parser.parseToSsml(textToSynth, "en-GB");
     ssml = ssml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.1\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\" xml:lang=\"en-GB\">", "");

@@ -46,6 +46,12 @@ const delayButtons: Array<HTMLInputElement> =
   document.getElementById('xstrongPauseBtn') as HTMLInputElement
 ];
 
+const speedButtons: Array<HTMLInputElement> =
+[
+  document.getElementById('slowBtn') as HTMLInputElement,
+  document.getElementById('fastBtn') as HTMLInputElement
+];
+
 interface StatusMessage {
   message?: string;
 }
@@ -112,17 +118,60 @@ function delayBtnClicked(this: HTMLInputElement) {
   }
 }
 
-function insertAtCursor(myField: HTMLTextAreaElement, myValue: string) {
-  if (myField.selectionStart) {
-      var startPos = myField.selectionStart;
-      var endPos = myField.selectionEnd;
-      myField.value = myField.value.substring(0, startPos)
-          + myValue
-          + myField.value.substring(endPos, myField.value.length);
-      myField.selectionStart = startPos + myValue.length;
-      myField.selectionEnd = startPos + myValue.length;
+speedButtons.forEach(element => {
+  element.addEventListener('click', speedBtnClicked);
+});
+
+// Event listeners for speed buttons
+function speedBtnClicked(this: HTMLInputElement) {
+  /*
+  🕛: <break strength="none">no pause</break>
+  🕐: <break strength="x-weak">x-weak pause</break>
+  🕑: <break strength="weak">weak pause</break>
+  🕒: <break strength="medium">medium pause</break>
+  🕓: <break strength="strong">strong pause</break>
+  🕔: <break strength="x-strong">x-strong pause</break>
+  */
+  switch (this.id) {
+    case "slowBtn":
+      insertAtCursor(speechTextBox, "[[speed:65|", "]]");
+      break;
+    case "fastBtn":
+      insertAtCursor(speechTextBox, "[[speed:85|", "]]");
+      break;
+    default:
+      break;
+  }
+}
+
+// Helper functions
+function insertAtCursor(textArea: HTMLTextAreaElement, insertValue: string, insertValue2?: string) {
+  const startPos = textArea.selectionStart;
+  const endPos = textArea.selectionEnd;
+  console.log("Start: ", startPos);
+  console.log("End: ", endPos);
+  if (startPos == endPos) {
+    if (insertValue2) {
+      insertValue = insertValue + "<INSERT TEXT HERE>" + insertValue2;
+    }
+    textArea.value = 
+      textArea.value.substring(0, startPos)
+      + insertValue
+      + textArea.value.substring(endPos, textArea.value.length);
+    textArea.selectionStart = startPos + insertValue.length;
+    textArea.selectionEnd = startPos + insertValue.length;
   } else {
-      myField.value += myValue;
+    const leftText = textArea.value.substring(0, startPos);
+    const enclosedText = textArea.value.substring(startPos, endPos);
+    const rightText = textArea.value.substring(endPos, textArea.value.length);
+    console.log(leftText);
+    console.log(insertValue);
+    console.log(enclosedText);
+    console.log(insertValue2);
+    console.log(rightText);
+    textArea.value = leftText + insertValue + enclosedText + insertValue2 + rightText;
+    textArea.selectionStart = startPos + insertValue.length + enclosedText.length;
+    textArea.selectionEnd = startPos + insertValue.length + enclosedText.length;
   }
 }
 
