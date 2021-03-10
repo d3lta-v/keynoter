@@ -92,13 +92,13 @@ export class SystemInfoChannel implements IpcChannelInterface {
           throw new Error("Save cancelled");
         }
 
-        event.sender.send("connection-state", { message: "Initialising download..." });
+        event.sender.send("connection-state", { message: "Starting download..." });
         
         const payload1 = await axios(request1Config);
         const jsonResponse: WJsonResponse = payload1.data;
         if (jsonResponse.status == "success") {
           console.log("Received successful response: ", jsonResponse.message);
-          event.sender.send("connection-state", { message: "Downloading audio..." });
+          event.sender.send("connection-state", { message: "Synthesizing audio..." });
         } else {
           throw new Error("Unsuccessful 1st payload injection: " + jsonResponse.message);
         }
@@ -142,6 +142,11 @@ export class SystemInfoChannel implements IpcChannelInterface {
               mode: format.mode
             });
 
+            event.sender.send("connection-state", { message: "Encoding audio..." });
+
+            encoder.on('finish', () => {
+              event.sender.send("connection-state", { message: "Speech synthesis complete!" });
+            });
             decoder.pipe(encoder).pipe(writer);
           });
           response.data.pipe(decoder);
