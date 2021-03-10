@@ -37,7 +37,13 @@ export class SystemInfoChannel implements IpcChannelInterface {
       4. Use emojis as start and stop symbols for SSML
     
       SimpleSSML Specifications
-      🕛🕐🕑🕒🕓🕔🕕: Time demarcators, used to indicate a delay in speech
+      🕛: <break strength="none">no pause</break>
+      🕐: <break strength="x-weak">x-weak pause</break>
+      🕑: <break strength="weak">weak pause</break>
+      🕒: <break strength="medium">medium pause</break>
+      🕓: <break strength="strong">strong pause</break>
+      🕔:<break strength="x-strong">x-strong pause</break>
+      🕕: Time demarcators, used to indicate a delay in speech
       🚀🚀🐢🐢: Speed demarcators, used to indicate faster or slower speech, and by how much. Each emoji represents +/-5% change
       🔠🔢: Indicate for the synthesizer to read out individual or numbers.
     */
@@ -100,6 +106,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
           console.log("Received successful response: ", jsonResponse.message);
           event.sender.send("connection-state", { message: "Synthesizing audio..." });
         } else {
+          fs.unlinkSync(saveDialogResult.filePath);
           throw new Error("Unsuccessful 1st payload injection: " + jsonResponse.message);
         }
 
@@ -161,6 +168,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
           })
           response.data.on('error', (error: Error) => {
             // event.sender.send('downloadError', error)
+            fs.unlinkSync(saveDialogResult.filePath);
             throw error;
           })
         });
