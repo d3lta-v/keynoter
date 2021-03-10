@@ -7,6 +7,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough from 'tough-cookie';
 import * as lame from 'lame';
+const parser: any = require('wiki2ssml');
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
@@ -42,7 +43,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
       🕑: <break strength="weak">weak pause</break>
       🕒: <break strength="medium">medium pause</break>
       🕓: <break strength="strong">strong pause</break>
-      🕔:<break strength="x-strong">x-strong pause</break>
+      🕔: <break strength="x-strong">x-strong pause</break>
       🕕: Time demarcators, used to indicate a delay in speech
       🚀🚀🐢🐢: Speed demarcators, used to indicate faster or slower speech, and by how much. Each emoji represents +/-5% change
       🔠🔢: Indicate for the synthesizer to read out individual or numbers.
@@ -51,7 +52,34 @@ export class SystemInfoChannel implements IpcChannelInterface {
       // Return as there's no text to process
       return;
     }
+    let textToSynth = request.params[0];
+    // First stage: escaping XML characters
+    // TODO
+    // Second stage: injecting delays
+    const replacementMap: { [key: string]: string} = {
+      "🕛": "<break strength=\"none\">no pause</break>",
+      "🕐": "<break strength=\"x-weak\">x-weak pause</break>",
+      "🕑": "<break strength=\"weak\">weak pause</break>",
+      "🕒": "<break strength=\"medium\">medium pause</break>",
+      "🕓": "<break strength=\"strong\">strong pause</break>",
+      "🕔": "<break strength=\"x-strong\">x-strong pause</break>"
+    };
+    for (const key in replacementMap) {
+      if (Object.prototype.hasOwnProperty.call(replacementMap, key)) {
+        const element = replacementMap[key];
+        console.log(key);
+        console.log(element);
+        textToSynth.replace(key, element);
+      }
+    }
+    const rex = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
+    textToSynth.replace(rex, match => `[e-${match.codePointAt(0).toString(16)}]`);
 
+    let ssml = parser.parseToSsml(textToSynth, "en-GB");
+    ssml = ssml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.1\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\" xml:lang=\"en-GB\">", "");
+    ssml = ssml.replace("</speak>", "");
+
+    console.log("Target SSML: ", ssml);
 
     // Create base
     // const BASE = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbQ==", "base64").toString('ascii');
@@ -60,7 +88,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // Web stuff goes here
     const pay1 = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbS9kZW1vcy9saXZlL3R0cy1kZW1vL2FwaS90dHMvc3RvcmU=", "base64").toString('ascii');
     const pay2 = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbS9kZW1vcy9saXZlL3R0cy1kZW1vL2FwaS90dHMvbmV3U3ludGhlc2l6ZT92b2ljZT1lbi1VU19NaWNoYWVsVjNWb2ljZSZpZD1iZDk4ZTBlMi1jMTlkLTQzNDgtOTEyZC00ZWE4N2NjZGM4ZjI=", "base64").toString('ascii');
-    const request1Body: string = JSON.stringify({"ssmlText":request.params[0],"sessionID":"bd98e0e2-c19d-4348-912d-4ea87ccdc8f2"});
+    const request1Body: string = JSON.stringify({"ssmlText":ssml,"sessionID":"bd98e0e2-c19d-4348-912d-4ea87ccdc8f2"});
     const request1Config: AxiosRequestConfig = {
       method: 'post',
       url: pay1,

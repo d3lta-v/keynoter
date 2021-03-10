@@ -5313,6 +5313,11 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+pegjs@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/pegjs/-/pegjs-0.10.0.tgz#cf8bafae6eddff4b5a7efb185269eaaf4610ddbd"
+  integrity sha1-z4uvrm7d/0tafvsYUmnqr0YQ3b0=
+
 pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
@@ -5461,6 +5466,11 @@ prepend-http@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-2.0.0.tgz#e92434bfa5ea8c19f41cdfd401d741a3c819d897"
   integrity sha1-6SQ0v6XqjBn0HN/UAddBo8gZ2Jc=
+
+prettify-xml@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/prettify-xml/-/prettify-xml-1.2.0.tgz#46dcf1ee8a8d8b73db30b7e06ef26dc9cf3f6f18"
+  integrity sha1-Rtzx7oqNi3PbMLfgbvJtyc8/bxg=
 
 pretty-bytes@^1.0.2:
   version "1.0.4"
@@ -7197,6 +7207,14 @@ wide-align@^1.1.0:
   integrity sha512-QGkOQc8XL6Bt5PwnsExKBPuMKBxnGxWWW3fU55Xt4feHozMUhdUMaBCk290qpm/wG5u/RSKzwdAC4i51YigihA==
   dependencies:
     string-width "^1.0.2 || 2"
+
+wiki2ssml@^0.2.16:
+  version "0.2.16"
+  resolved "https://registry.yarnpkg.com/wiki2ssml/-/wiki2ssml-0.2.16.tgz#1a1ca31e1b1a8fbded716c5079f9e1dae12af231"
+  integrity sha512-BB7wEDbexWExUdsBD0DWSgN2gF7znEarXe+5A8vhFSRJ9Fe9+mdyN4zn1Cxu8+N1TYHDhw6YmOHtWJANWn4qSA==
+  dependencies:
+    pegjs "^0.10.0"
+    prettify-xml "^1.2.0"
 
 wildcard@^2.0.0:
   version "2.0.0"
