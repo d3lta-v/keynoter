@@ -7,7 +7,6 @@ import axios, { AxiosRequestConfig } from 'axios';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough from 'tough-cookie';
 import * as lame from 'lame';
-const parser: any = require('wiki2ssml');
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
@@ -46,6 +45,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
       🕔: <break strength="x-strong">x-strong pause</break>
       🕕: Time demarcators, used to indicate a delay in speech
       🚀🚀🐢🐢: Speed demarcators, used to indicate faster or slower speech, and by how much. Each emoji represents +/-5% change
+      🔚: Ending character, to designate that a section has ended
       🔠🔢: Indicate for the synthesizer to read out individual or numbers.
     */
     if (!request.params) {
@@ -56,26 +56,26 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // First stage: escaping XML characters
     // TODO
     // Second stage: injecting delays
-    // const replacementMap: { [key: string]: string} = {
-    //   "🕛": "<break strength=\"none\">no pause</break>",
-    //   "🕐": "<break strength=\"x-weak\">x-weak pause</break>",
-    //   "🕑": "<break strength=\"weak\">weak pause</break>",
-    //   "🕒": "<break strength=\"medium\">medium pause</break>",
-    //   "🕓": "<break strength=\"strong\">strong pause</break>",
-    //   "🕔": "<break strength=\"x-strong\">x-strong pause</break>"
-    // };
-    // for (const key in replacementMap) {
-    //   if (Object.prototype.hasOwnProperty.call(replacementMap, key)) {
-    //     const element = replacementMap[key];
-    //     textToSynth = textToSynth.replace(key, element);
-    //   }
-    // }
+    const replacementMap: { [key: string]: string} = {
+      "🕛": "<break strength=\"none\">no pause</break>",
+      "🕐": "<break strength=\"x-weak\">x-weak pause</break>",
+      "🕑": "<break strength=\"weak\">weak pause</break>",
+      "🕒": "<break strength=\"medium\">medium pause</break>",
+      "🕓": "<break strength=\"strong\">strong pause</break>",
+      "🕔": "<break strength=\"x-strong\">x-strong pause</break>"
+    };
+    for (const key in replacementMap) {
+      if (Object.prototype.hasOwnProperty.call(replacementMap, key)) {
+        const element = replacementMap[key];
+        textToSynth = textToSynth.replace(key, element);
+      }
+    }
 
-    let ssml = parser.parseToSsml(textToSynth, "en-GB");
-    ssml = ssml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.1\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\" xml:lang=\"en-GB\">", "");
-    ssml = ssml.replace("</speak>", "");
+    // let ssml = parser.parseToSsml(textToSynth, "en-GB");
+    // ssml = ssml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.1\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\" xml:lang=\"en-GB\">", "");
+    // ssml = ssml.replace("</speak>", "");
 
-    console.log("Target SSML: ", ssml);
+    console.log("Target SSML: ", textToSynth);
 
     // Create base
     // const BASE = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbQ==", "base64").toString('ascii');
@@ -84,7 +84,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // Web stuff goes here
     const pay1 = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbS9kZW1vcy9saXZlL3R0cy1kZW1vL2FwaS90dHMvc3RvcmU=", "base64").toString('ascii');
     const pay2 = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbS9kZW1vcy9saXZlL3R0cy1kZW1vL2FwaS90dHMvbmV3U3ludGhlc2l6ZT92b2ljZT1lbi1VU19NaWNoYWVsVjNWb2ljZSZpZD1iZDk4ZTBlMi1jMTlkLTQzNDgtOTEyZC00ZWE4N2NjZGM4ZjI=", "base64").toString('ascii');
-    const request1Body: string = JSON.stringify({"ssmlText":ssml,"sessionID":"bd98e0e2-c19d-4348-912d-4ea87ccdc8f2"});
+    const request1Body: string = JSON.stringify({"ssmlText":textToSynth,"sessionID":"bd98e0e2-c19d-4348-912d-4ea87ccdc8f2"});
     const request1Config: AxiosRequestConfig = {
       method: 'post',
       url: pay1,

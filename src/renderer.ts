@@ -96,22 +96,22 @@ function delayBtnClicked(this: HTMLInputElement) {
   */
   switch (this.id) {
     case "noPauseBtn":
-      insertAtCursor(speechTextBox, "[[silence:0ms]]");
+      insertAtCursor(speechTextBox, "🕛");
       break;
     case "xweakPauseBtn":
-      insertAtCursor(speechTextBox, "[[silence:50ms]]");
+      insertAtCursor(speechTextBox, "🕐");
       break;
     case "weakPauseBtn":
-      insertAtCursor(speechTextBox, "[[silence:100ms]]");
+      insertAtCursor(speechTextBox, "🕑");
       break;
     case "mediumPauseBtn":
-      insertAtCursor(speechTextBox, "[[silence:500ms]]");
+      insertAtCursor(speechTextBox, "🕒");
       break;
     case "strongPauseBtn":
-      insertAtCursor(speechTextBox, "[[silence:1000ms]]");
+      insertAtCursor(speechTextBox, "🕓");
       break;
     case "xstrongPauseBtn":
-      insertAtCursor(speechTextBox, "[[silence:2000ms]]");
+      insertAtCursor(speechTextBox, "🕔");
       break;
     default:
       break;
@@ -132,12 +132,22 @@ function speedBtnClicked(this: HTMLInputElement) {
   🕓: <break strength="strong">strong pause</break>
   🕔: <break strength="x-strong">x-strong pause</break>
   */
+  // switch (this.id) {
+  //   case "slowBtn":
+  //     insertAtCursor(speechTextBox, "[[speed:65|", "]]");
+  //     break;
+  //   case "fastBtn":
+  //     insertAtCursor(speechTextBox, "[[speed:85|", "]]");
+  //     break;
+  //   default:
+  //     break;
+  // }
   switch (this.id) {
     case "slowBtn":
-      insertAtCursor(speechTextBox, "[[speed:65|", "]]");
+      insertAtCursor(speechTextBox, "🚀", "🔚");
       break;
     case "fastBtn":
-      insertAtCursor(speechTextBox, "[[speed:85|", "]]");
+      insertAtCursor(speechTextBox, "🚀", "🔚");
       break;
     default:
       break;
