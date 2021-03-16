@@ -29,7 +29,7 @@ class Main {
   private createWindow = (): void => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-      height: 600,
+      height: 900,
       width: 800,
       webPreferences: {
         nodeIntegration: false, // is default value after Electron v5
