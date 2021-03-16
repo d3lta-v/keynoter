@@ -66,8 +66,6 @@ document.getElementById('sendButton').addEventListener('click', async () => {
   // document.getElementById('os-info').innerHTML = t.message;
 
   const data: string = speechTextBox.value;
-  // window.api.send("system-info", data);
-  // window.api.send("system-info");
 
   const request: IpcRequest = { params: [data] };
   const t = await ipc.send<{ message: string }>('system-info', request);
@@ -132,16 +130,6 @@ function speedBtnClicked(this: HTMLInputElement) {
   🕓: <break strength="strong">strong pause</break>
   🕔: <break strength="x-strong">x-strong pause</break>
   */
-  // switch (this.id) {
-  //   case "slowBtn":
-  //     insertAtCursor(speechTextBox, "[[speed:65|", "]]");
-  //     break;
-  //   case "fastBtn":
-  //     insertAtCursor(speechTextBox, "[[speed:85|", "]]");
-  //     break;
-  //   default:
-  //     break;
-  // }
   switch (this.id) {
     case "slowBtn":
       insertAtCursor(speechTextBox, "🐢🏁", "🐢🔚");

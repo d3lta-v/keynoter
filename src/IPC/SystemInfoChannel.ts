@@ -73,7 +73,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
         const element = replacementMap[key];
         textToSynth = textToSynth.replace(key, element);
       }
-    }    
+    }
 
     // let ssml = parser.parseToSsml(textToSynth, "en-GB");
     // ssml = ssml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.1\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\" xml:lang=\"en-GB\">", "");
@@ -135,7 +135,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
           event.sender.send("connection-state", { message: "Synthesizing audio..." });
         } else {
           fs.unlinkSync(saveDialogResult.filePath);
-          throw new Error("Unsuccessful 1st payload injection: " + jsonResponse.message);
+          throw new Error("Server error: " + jsonResponse.message);
         }
 
         // Check if file is being used.
