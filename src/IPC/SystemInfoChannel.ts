@@ -94,10 +94,15 @@ export class SystemInfoChannel implements IpcChannelInterface {
       console.log("XML validation successful!");
     } else {
       console.log(validationResult);
-      throw new Error("Invalid input, please check your input and try again");
+      event.sender.send("connection-state", { message: "Invalid input! Please check your entry" });
+      return;
     }
 
     // TODO: Check for invalid characters (e.g. emojis, including any leftover emojis)
+    if (/\p{Extended_Pictographic}/u.test(textToSynth) === true) {
+      event.sender.send("connection-state", { message: "Invalid input: your entry has emojis inside!" });
+      return
+    }
 
     // Create base
     // const BASE = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbQ==", "base64").toString('ascii');
