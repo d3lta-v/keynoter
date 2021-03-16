@@ -3,6 +3,7 @@
   "productName": "Keynoter",
   "version": "0.0.1",
   "description": "Advanced and Simple Speech Synthesis",
+  "repository": "https://github.com/d3lta-v/keynoter",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -89,6 +90,7 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
-    "lame": "d3lta-v/node-lame"
+    "lame": "d3lta-v/node-lame",
+    "update-electron-app": "^2.0.1"
   }
 }

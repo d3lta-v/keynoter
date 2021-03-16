@@ -10,6 +10,11 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
+// Autoupdater
+require('update-electron-app')({
+  updateInterval: '1 hour'
+})
+
 class Main {
   private mainWindow: BrowserWindow;
 
