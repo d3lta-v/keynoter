@@ -1,8 +1,8 @@
 {
   "name": "keynoter",
-  "productName": "keynoter",
+  "productName": "Keynoter",
   "version": "0.0.1",
-  "description": "Advanced and simple speech synthesis",
+  "description": "Advanced and Simple Speech Synthesis",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
