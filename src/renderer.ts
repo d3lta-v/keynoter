@@ -144,10 +144,10 @@ function speedBtnClicked(this: HTMLInputElement) {
   // }
   switch (this.id) {
     case "slowBtn":
-      insertAtCursor(speechTextBox, "🚀", "🔚");
+      insertAtCursor(speechTextBox, "🐢🏁", "🐢🔚");
       break;
     case "fastBtn":
-      insertAtCursor(speechTextBox, "🚀", "🔚");
+      insertAtCursor(speechTextBox, "🚀🏁", "🚀🔚");
       break;
     default:
       break;

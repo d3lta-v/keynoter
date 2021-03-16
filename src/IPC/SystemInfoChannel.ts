@@ -55,39 +55,25 @@ export class SystemInfoChannel implements IpcChannelInterface {
       return;
     }
     let textToSynth = request.params[0];
-    // First stage: escaping XML characters
-    // TODO
-    // Second stage: injecting delays
+
     const replacementMap: { [key: string]: string} = {
       "🕛": "<break strength=\"none\">no pause</break>",
       "🕐": "<break strength=\"x-weak\">x-weak pause</break>",
       "🕑": "<break strength=\"weak\">weak pause</break>",
       "🕒": "<break strength=\"medium\">medium pause</break>",
       "🕓": "<break strength=\"strong\">strong pause</break>",
-      "🕔": "<break strength=\"x-strong\">x-strong pause</break>"
+      "🕔": "<break strength=\"x-strong\">x-strong pause</break>",
+      "🚀🏁": "<prosody rate=\"+5%\">",
+      "🐢🏁": "<prosody rate=\"-5%\">",
+      "🚀🔚": "</prosody>",
+      "🐢🔚": "</prosody>"
     };
     for (const key in replacementMap) {
       if (Object.prototype.hasOwnProperty.call(replacementMap, key)) {
         const element = replacementMap[key];
         textToSynth = textToSynth.replace(key, element);
       }
-    }
-
-    // Third stage: speed markers
-    const sectionMarkers: string[] = [];
-    const startMarkerPos: number[] = [];
-    const endMarkerPos: number[] = [];
-    let textSubStr = 0;
-    for (const ch of textToSynth) {
-      console.log(ch);
-      if (ch == "🚀" || ch == "🐢") {
-        sectionMarkers.push(ch);
-        startMarkerPos.push(textSubStr);
-      } else if (ch == "🔚") {
-        endMarkerPos.push(textSubStr);
-      }
-      textSubStr++;
-    }
+    }    
 
     // let ssml = parser.parseToSsml(textToSynth, "en-GB");
     // ssml = ssml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.1\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\" xml:lang=\"en-GB\">", "");
