@@ -45,8 +45,10 @@ export class SystemInfoChannel implements IpcChannelInterface {
       🕔: <break strength="x-strong">x-strong pause</break>
       🕕: Time demarcators, used to indicate a delay in speech
       🚀🚀🐢🐢: Speed demarcators, used to indicate faster or slower speech, and by how much. Each emoji represents +/-5% change
+                  <prosody rate="+5%"> </prosody>
       🔚: Ending character, to designate that a section has ended
-      🔠🔢: Indicate for the synthesizer to read out individual or numbers.
+      🔢: <say-as interpret-as="digits"> </say-as>
+      🔠: <say-as interpret-as="letters">Hello</say-as>
     */
     if (!request.params) {
       // Return as there's no text to process
