@@ -80,6 +80,7 @@
     "electron-rebuild": "^2.3.5",
     "eslint": "^7.6.0",
     "eslint-plugin-import": "^2.20.0",
+    "fast-xml-parser": "^3.19.0",
     "fork-ts-checker-webpack-plugin": "^5.0.14",
     "node-loader": "^1.0.1",
     "style-loader": "^1.2.1",

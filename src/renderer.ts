@@ -52,6 +52,12 @@ const speedButtons: Array<HTMLInputElement> =
   document.getElementById('fastBtn') as HTMLInputElement
 ];
 
+const pronounceButtons: Array<HTMLInputElement> =
+[
+  document.getElementById('numbersBtn') as HTMLInputElement,
+  document.getElementById('lettersBtn') as HTMLInputElement
+];
+
 interface StatusMessage {
   message?: string;
 }
@@ -110,6 +116,32 @@ function delayBtnClicked(this: HTMLInputElement) {
       break;
     case "xstrongPauseBtn":
       insertAtCursor(speechTextBox, "🕔");
+      break;
+    default:
+      break;
+  }
+}
+
+pronounceButtons.forEach(element => {
+  element.addEventListener('click', pronounceBtnClicked);
+});
+
+// Event listeners for speed buttons
+function pronounceBtnClicked(this: HTMLInputElement) {
+  /*
+  🕛: <break strength="none">no pause</break>
+  🕐: <break strength="x-weak">x-weak pause</break>
+  🕑: <break strength="weak">weak pause</break>
+  🕒: <break strength="medium">medium pause</break>
+  🕓: <break strength="strong">strong pause</break>
+  🕔: <break strength="x-strong">x-strong pause</break>
+  */
+  switch (this.id) {
+    case "numbersBtn":
+      insertAtCursor(speechTextBox, "🔢🏁", "🔢🔚");
+      break;
+    case "lettersBtn":
+      insertAtCursor(speechTextBox, "🔠🏁", "🔠🔚");
       break;
     default:
       break;

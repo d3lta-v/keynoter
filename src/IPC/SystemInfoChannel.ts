@@ -5,8 +5,9 @@ import path from 'path';
 import {IpcRequest} from "../shared/IpcRequest";
 import axios, { AxiosRequestConfig } from 'axios';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
-import tough from 'tough-cookie';
+import tough, { parse } from 'tough-cookie';
 import * as lame from 'lame';
+import * as parser from 'fast-xml-parser';
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
@@ -56,6 +57,9 @@ export class SystemInfoChannel implements IpcChannelInterface {
     }
     let textToSynth = request.params[0];
 
+    // Escape any XML-like characters
+    textToSynth = this.escapeXml(textToSynth);
+
     const replacementMap: { [key: string]: string} = {
       "🕛": "<break strength=\"none\">no pause</break>",
       "🕐": "<break strength=\"x-weak\">x-weak pause</break>",
@@ -66,7 +70,11 @@ export class SystemInfoChannel implements IpcChannelInterface {
       "🚀🏁": "<prosody rate=\"+5%\">",
       "🐢🏁": "<prosody rate=\"-5%\">",
       "🚀🔚": "</prosody>",
-      "🐢🔚": "</prosody>"
+      "🐢🔚": "</prosody>",
+      "🔢🏁": "<say-as interpret-as=\"digits\">",
+      "🔠🏁": "<say-as interpret-as=\"letters\">",
+      "🔢🔚": "</say-as>",
+      "🔠🔚": "</say-as>",
     };
     for (const key in replacementMap) {
       if (Object.prototype.hasOwnProperty.call(replacementMap, key)) {
@@ -78,8 +86,18 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // let ssml = parser.parseToSsml(textToSynth, "en-GB");
     // ssml = ssml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.1\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\" xml:lang=\"en-GB\">", "");
     // ssml = ssml.replace("</speak>", "");
-
+    const xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.1\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\" xml:lang=\"en-GB\">";
+    const xmlFooter = "</speak>";
     console.log("Target SSML: ", textToSynth);
+    const validationResult = parser.validate(xmlHeader + textToSynth + xmlFooter);
+    if (validationResult === true) { //optional (it'll return an object in case it's not valid)
+      console.log("XML validation successful!");
+    } else {
+      console.log(validationResult);
+      throw new Error("Invalid input, please check your input and try again");
+    }
+
+    // TODO: Check for invalid characters (e.g. emojis, including any leftover emojis)
 
     // Create base
     // const BASE = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbQ==", "base64").toString('ascii');
@@ -210,7 +228,11 @@ export class SystemInfoChannel implements IpcChannelInterface {
         // }
       } catch (err) {
         //TODO: properly show errors thru the user interface
-        event.sender.send("connection-state", { message: "Error: " + (err as Error).message });
+        if (err.code == "ENOTFOUND") {
+          event.sender.send("connection-state", { message: "Inactive Internet connection! This app requires an Internet connection" });
+        } else {
+          event.sender.send("connection-state", { message: "Error: " + (err as Error).message });
+        }
         console.log(err);
       }
     }
@@ -222,5 +244,17 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // event.sender.send(request.responseChannel, { kernel: execSync('uname -a').toString() });
     // console.log("Sent event from SystemInfoChannel with response channel: ", request.responseChannel);
     // event.sender.send(request.responseChannel, { message: request.params[0] + "_appended" });
+  }
+
+  escapeXml(unsafe: string) {
+    return unsafe.replace(/[<>&'"]/g, function (c) {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+        }
+    });
   }
 }
