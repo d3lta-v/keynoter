@@ -79,7 +79,8 @@ export class SystemInfoChannel implements IpcChannelInterface {
     for (const key in replacementMap) {
       if (Object.prototype.hasOwnProperty.call(replacementMap, key)) {
         const element = replacementMap[key];
-        textToSynth = textToSynth.replace(key, element);
+        const reg = RegExp(key, "g"); // initiate global replacement
+        textToSynth = textToSynth.replace(reg, element);
       }
     }
 
