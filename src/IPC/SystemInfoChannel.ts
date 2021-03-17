@@ -8,6 +8,7 @@ import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough, { parse } from 'tough-cookie';
 import * as lame from 'lame';
 import * as parser from 'fast-xml-parser';
+import { v4 as uuidv4 } from 'uuid';
 
 axiosCookieJarSupport(axios);
 const cookieJar = new tough.CookieJar();
@@ -110,9 +111,10 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // const ax = axios.create({baseURL: BASE});
 
     // Web stuff goes here
+    const sessionID: string = uuidv4();
     const pay1 = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbS9kZW1vcy9saXZlL3R0cy1kZW1vL2FwaS90dHMvc3RvcmU=", "base64").toString('ascii');
-    const pay2 = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbS9kZW1vcy9saXZlL3R0cy1kZW1vL2FwaS90dHMvbmV3U3ludGhlc2l6ZT92b2ljZT1lbi1VU19NaWNoYWVsVjNWb2ljZSZpZD1iZDk4ZTBlMi1jMTlkLTQzNDgtOTEyZC00ZWE4N2NjZGM4ZjI=", "base64").toString('ascii');
-    const request1Body: string = JSON.stringify({"ssmlText":textToSynth,"sessionID":"bd98e0e2-c19d-4348-912d-4ea87ccdc8f2"});
+    const pay2 = Buffer.from("aHR0cHM6Ly93d3cuaWJtLmNvbS9kZW1vcy9saXZlL3R0cy1kZW1vL2FwaS90dHMvbmV3U3ludGhlc2l6ZT92b2ljZT1lbi1VU19NaWNoYWVsVjNWb2ljZSZpZD0=", "base64").toString('ascii') + sessionID;
+    const request1Body: string = JSON.stringify({"ssmlText":textToSynth,"sessionID": sessionID});
     const request1Config: AxiosRequestConfig = {
       method: 'post',
       url: pay1,

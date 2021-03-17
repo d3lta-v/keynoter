@@ -1,7 +1,7 @@
 {
   "name": "keynoter",
   "productName": "Keynoter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Advanced and Simple Speech Synthesis",
   "repository": "https://github.com/d3lta-v/keynoter",
   "main": ".webpack/main",
@@ -86,7 +86,8 @@
     "node-loader": "^1.0.1",
     "style-loader": "^1.2.1",
     "ts-loader": "^8.0.2",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "uuid": "^8.3.2"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
