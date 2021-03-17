@@ -1,5 +1,5 @@
 import {IpcChannelInterface} from "./IpcChannelInterface";
-import {IpcMainEvent, BrowserWindow, dialog, app, SaveDialogReturnValue} from 'electron';
+import {IpcMainEvent, BrowserWindow, dialog, app, SaveDialogReturnValue, WebContents} from 'electron';
 import fs from 'fs';
 import path from 'path';
 import {IpcRequest} from "../shared/IpcRequest";
@@ -114,13 +114,13 @@ export class SystemInfoChannel implements IpcChannelInterface {
   });
   
   const getSpeechFile = async (req1Config: AxiosRequestConfig, req2Config: AxiosRequestConfig, filePath: string, index?: number, total?: number) => {
-    event.sender.send("connection-state", { message: "Starting download..." });
+    this.showStatus(event.sender, "Starting download...", index, total);
     
     const payload1 = await axios(req1Config);
     const jsonResponse: WJsonResponse = payload1.data;
     if (jsonResponse.status == "success") {
       console.log("Received successful response: ", jsonResponse.message);
-      event.sender.send("connection-state", { message: "Synthesizing audio..." });
+      this.showStatus(event.sender, "Synthesizing audio...", index, total);
     } else {
       fs.unlinkSync(filePath);
       throw new Error("Server error: " + jsonResponse.message);
@@ -168,7 +168,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
         event.sender.send("connection-state", { message: "Encoding audio..." });
         
         encoder.on('finish', () => {
-          event.sender.send("connection-state", { message: "Speech synthesis complete!" });
+          this.showStatus(event.sender, "Speech synthesis complete!", index, total);
         });
         decoder.pipe(encoder).pipe(writer);
       });
@@ -177,7 +177,7 @@ export class SystemInfoChannel implements IpcChannelInterface {
       response.data.on('data', (data: ArrayBuffer) => {
         downloaded += Buffer.byteLength(data);
         const downloadProgress = downloaded / 1000;
-        event.sender.send("connection-state", { message: "Downloading audio (" + downloadProgress + " KB done)" });
+        this.showStatus(event.sender, "Downloading audio (" + downloadProgress + " KB done)", index, total);
       });
       response.data.on('end', () => {            
         event.sender.send("connection-state", { message: "Download complete!" });
@@ -274,6 +274,16 @@ async promptUser(multiple: boolean): Promise<SaveDialogReturnValue> {
   }
   const saveDialogResult = await dialog.showSaveDialog(win, options)
   return saveDialogResult;
+}
+
+showStatus(sender: WebContents, message: string, index?: number, total?: number) {
+  if (index) {
+    // Need to show index
+    sender.send("connection-state", { message: message + " (" + index + "/" + total + ")" });
+  } else {
+    // No need to show index
+    sender.send("connection-state", { message: message });
+  }
 }
 
 escapeXml(unsafe: string) {
