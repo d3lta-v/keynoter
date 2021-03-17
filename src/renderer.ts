@@ -36,6 +36,7 @@ import {IpcRequest} from "./shared/IpcRequest";
 const ipc = new IpcServiceNew();
 const speechTextBox: HTMLTextAreaElement = document.getElementById('speechToSynth') as HTMLTextAreaElement;
 const currentStatusPara: HTMLParagraphElement = document.getElementById('currentStatus') as HTMLParagraphElement;
+const breakBtn: HTMLInputElement = document.getElementById('breakBtn') as HTMLInputElement;
 const delayButtons: Array<HTMLInputElement> =
 [
   document.getElementById('noPauseBtn') as HTMLInputElement,
@@ -172,6 +173,13 @@ function speedBtnClicked(this: HTMLInputElement) {
     default:
       break;
   }
+}
+
+breakBtn.addEventListener('click', breakBtnClicked);
+
+function breakBtnClicked(this: HTMLInputElement) {
+  insertAtCursor(speechTextBox, "\n✂️\n");
+  this.blur();
 }
 
 // Helper functions

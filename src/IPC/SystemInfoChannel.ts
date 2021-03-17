@@ -62,8 +62,8 @@ export class SystemInfoChannel implements IpcChannelInterface {
     // Escape any XML-like characters
     textToSynth = this.escapeXml(textToSynth);
 
-    // Break up text into array to be parsed as multiple audio files using 🎬
-    arraySynth = textToSynth.split("🎬");
+    // Break up text into array to be parsed as multiple audio files using ✂️
+    arraySynth = textToSynth.split("✂️");
 
     const replacementMap: { [key: string]: string} = {
       "🕛": "<break strength=\"none\">no pause</break>",
