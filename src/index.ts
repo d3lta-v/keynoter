@@ -34,8 +34,9 @@ class Main {
   private createWindow = (): void => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-      height: 900,
-      width: 800,
+      height: 850,
+      width: 950,
+      useContentSize: true,
       webPreferences: {
         nodeIntegration: false, // is default value after Electron v5
         contextIsolation: true, // protect against prototype pollution
