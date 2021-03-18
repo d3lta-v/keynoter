@@ -36,6 +36,7 @@ import {IpcRequest} from "./shared/IpcRequest";
 const ipc = new IpcServiceNew();
 const speechTextBox: HTMLTextAreaElement = document.getElementById('speechToSynth') as HTMLTextAreaElement;
 const currentStatusPara: HTMLParagraphElement = document.getElementById('currentStatus') as HTMLParagraphElement;
+const sendBtn: HTMLInputElement = document.getElementById('sendButton') as HTMLInputElement;
 const breakBtn: HTMLInputElement = document.getElementById('breakBtn') as HTMLInputElement;
 const delayButtons: Array<HTMLInputElement> =
 [
@@ -68,7 +69,7 @@ console.log('👋 This message is being logged by "renderer.js", included via we
 /*
   Event Listeners
 */
-document.getElementById('sendButton').addEventListener('click', async () => {
+sendBtn.addEventListener('click', async () => {
   // const t = await ipc.send<{ message: string }>('system-info');
   // document.getElementById('os-info').innerHTML = t.message;
 
@@ -77,6 +78,7 @@ document.getElementById('sendButton').addEventListener('click', async () => {
   const request: IpcRequest = { params: [data] };
   const t = await ipc.send<{ message: string }>('system-info', request);
   console.log("Received message from IPC: ", t);
+  sendBtn.blur();
 });
 
 window.api.receive("connection-state", (data: StatusMessage) => {
@@ -121,6 +123,7 @@ function delayBtnClicked(this: HTMLInputElement) {
     default:
       break;
   }
+  this.blur();
 }
 
 pronounceButtons.forEach(element => {
@@ -147,6 +150,7 @@ function pronounceBtnClicked(this: HTMLInputElement) {
     default:
       break;
   }
+  this.blur();
 }
 
 speedButtons.forEach(element => {
@@ -173,6 +177,7 @@ function speedBtnClicked(this: HTMLInputElement) {
     default:
       break;
   }
+  this.blur();
 }
 
 breakBtn.addEventListener('click', breakBtnClicked);
