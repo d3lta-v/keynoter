@@ -276,7 +276,7 @@ async promptUser(multiple: boolean): Promise<SaveDialogReturnValue> {
   return saveDialogResult;
 }
 
-showStatus(sender: WebContents, message: string, index?: number, total?: number) {
+showStatus(sender: WebContents, message: string, index?: number, total?: number): void {
   if (index) {
     // Need to show index
     sender.send("connection-state", { message: message + " (" + index + "/" + total + ")" });
@@ -286,7 +286,7 @@ showStatus(sender: WebContents, message: string, index?: number, total?: number)
   }
 }
 
-escapeXml(unsafe: string) {
+escapeXml(unsafe: string): string {
   return unsafe.replace(/[<>&'"]/g, function (c) {
     switch (c) {
       case '<': return '&lt;';
