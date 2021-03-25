@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import {IpcChannelInterface} from "./IPC/IpcChannelInterface";
 import {SystemInfoChannel} from "./IPC/SystemInfoChannel";
 
@@ -33,9 +33,15 @@ class Main {
 
   private createWindow = (): void => {
     // Create the browser window.
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
+    // Aspect ratio is 2:3 width:height
+    const desiredHeight = height * 0.8;
+    const desiredWidth = desiredHeight / 3 * 2;
+
     const mainWindow = new BrowserWindow({
-      height: 850,
-      width: 950,
+      height: desiredHeight,
+      width: desiredWidth,
       useContentSize: true,
       webPreferences: {
         nodeIntegration: false, // is default value after Electron v5
