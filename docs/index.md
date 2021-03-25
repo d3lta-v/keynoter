@@ -15,9 +15,13 @@ of a numerical value: 🔢🏁1234🔢🔚
 Pronounce individual letters instead of as a word: 
 🔠🏁ABCD🔠🔚
 
+
+
 The text from here onwards
 ✂️
 Will be placed in a different file
+
+
 
 Add different amount of delays to your text to 
 speech:
@@ -33,6 +37,8 @@ A medium delay between here 🕒 and here
 A strong delay between here 🕓 and here
 
 A very strong delay between here 🕔 and here
+
+
 
 🐢🏁The speech enclosed by these characters 
 is slower than usual, by -5%🐢🔚
